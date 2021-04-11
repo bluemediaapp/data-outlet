@@ -39,6 +39,7 @@ func main() {
 		if err != nil {
 			return err
 		}
+		user.Interests = nil
 		return ctx.JSON(user)
 	})
 	app.Get("/videos/:video_id", func(ctx *fiber.Ctx) error {
