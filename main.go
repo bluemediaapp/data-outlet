@@ -19,9 +19,8 @@ var (
 
 	mctx = context.Background()
 
-	usersCollection *mongo.Collection
+	usersCollection  *mongo.Collection
 	videosCollection *mongo.Collection
-
 )
 
 func main() {
@@ -30,8 +29,12 @@ func main() {
 		mongoUri: os.Getenv("mongo_uri"),
 	}
 
-	app.Get("/user/:user_id", func(ctx *fiber.Ctx) error {
-		userId, err := strconv.ParseInt(ctx.Params("user_id"), 10, 64)
+	app.Post("/user", func(ctx *fiber.Ctx) error {
+		rawUserId := ctx.Get("user_id", "")
+		if rawUserId == "" {
+			rawUserId = ctx.Get("auth_user_id")
+		}
+		userId, err := strconv.ParseInt(rawUserId, 10, 64)
 		if err != nil {
 			return err
 		}
@@ -42,8 +45,8 @@ func main() {
 		user.Interests = nil
 		return ctx.JSON(user)
 	})
-	app.Get("/videos/:video_id", func(ctx *fiber.Ctx) error {
-		videoId, err := strconv.ParseInt(ctx.Params("video_id"), 10, 64)
+	app.Post("/video", func(ctx *fiber.Ctx) error {
+		videoId, err := strconv.ParseInt(ctx.Get("video_id"), 10, 64)
 		if err != nil {
 			return err
 		}
